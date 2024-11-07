@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """script for filtered logger"""
 import re
+import os
 import logging
+import mysql.connector
 from typing import List
 PII_FIELDS = ('ssn', 'email', 'name', 'pwd', 'phone')
 
@@ -50,3 +52,15 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
+
+
+def get_db():
+    """implement get db function securely"""
+    conn = mysql.connector.connect(
+        host=os.getenv('PERSONAL_DATA_DB_HOST'),
+        user=os.getenv('PERSONAL_DATA_DB_USERNAME '),
+        pwd=os.getenv('PERSONAL_DATA_DB_PASSWORD'),
+        db=os.getenv('PERSONAL_DATA_DB_NAME')
+    )
+
+    return conn
