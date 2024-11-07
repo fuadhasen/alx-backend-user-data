@@ -6,10 +6,9 @@ from typing import List
 
 def filter_datum(fields: List[str],
                  redaction: str, message: str,
-                 separator: str):
+                 separator: str) -> str:
     """function filter_datum"""
     for field in fields:
-        match = rf"{field}=[^{separator}]*"
-        replacment_pattern = f"{field}={redaction}"
-        message = re.sub(match, replacment_pattern, message)
-    return message
+        message = re.sub(rf"{field}=[^{separator}]*",
+                         f"{field}={redaction}", message)
+    return separator.join(message.split(separator))
