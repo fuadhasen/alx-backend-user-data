@@ -54,13 +54,13 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db():
-    """implement get db function securely"""
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Implement get db function securely."""
     conn = mysql.connector.connect(
         host=os.getenv('PERSONAL_DATA_DB_HOST'),
-        user=os.getenv('PERSONAL_DATA_DB_USERNAME '),
-        pwd=os.getenv('PERSONAL_DATA_DB_PASSWORD'),
-        db=os.getenv('PERSONAL_DATA_DB_NAME')
+        user=os.getenv('PERSONAL_DATA_DB_USERNAME'),
+        password=os.getenv('PERSONAL_DATA_DB_PASSWORD'),
+        database=os.getenv('PERSONAL_DATA_DB_NAME')
     )
 
     return conn
