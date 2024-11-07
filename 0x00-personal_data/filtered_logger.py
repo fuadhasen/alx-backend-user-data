@@ -12,7 +12,7 @@ def filter_datum(fields: List[str],
     for field in fields:
         message = re.sub(rf"{field}=[^{separator}]*",
                          f"{field}={redaction}", message)
-    return f" {separator} ".join(message.split(separator))
+    return message
 
 
 class RedactingFormatter(logging.Formatter):
