@@ -5,7 +5,7 @@ import os
 import logging
 import mysql.connector
 from typing import List
-PII_FIELDS = ('ssn', 'email', 'name', 'pwd', 'phone')
+PII_FIELDS = ('ssn', 'email', 'name', 'password', 'phone')
 
 
 def filter_datum(fields: List[str],
@@ -27,17 +27,15 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        super().__init__(self.FORMAT)
+        super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        messge = record.getMessage()
         filter_mssge = filter_datum(self.fields,
                                     self.REDACTION,
-                                    messge, self.SEPARATOR)
-        original_mssge = super().format(record)
-        return original_mssge.replace(messge,
-                                      filter_mssge)
+                                    record.getMessage(), self.SEPARATOR)
+        record.msg = filter_mssge
+        return super().format(record)
 
 
 def get_logger() -> logging.Logger:
@@ -54,7 +52,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
+def get_db():
     """Implement get db function securely."""
     conn = mysql.connector.connect(
         host=os.getenv('PERSONAL_DATA_DB_HOST'),
@@ -64,3 +62,31 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     )
 
     return conn
+
+
+def main():
+    """main function"""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT name, email, phone,\
+        ssn, password, ip, last_login, user_agent \
+        FROM users"
+        )
+
+    rows = cursor.fetchall()
+    for row in rows:
+        log_message = (
+            f'name={row[0]}; email={row[1]}; phone={row[2]}; '
+            f'ssn={row[3]}; password={row[4]}; '
+            f'ip={row[5]}; last_login={row[6]}; '
+            f'user_agent={row[7]}'
+        )
+        log_record = logging.LogRecord("my_logger", logging.INFO, None, None,
+                                       log_message, None, None)
+        formatter = RedactingFormatter(fields=PII_FIELDS)
+        print(formatter.format(log_record))
+
+
+if __name__ == "__main__":
+    main()
