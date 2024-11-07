@@ -34,8 +34,8 @@ class RedactingFormatter(logging.Formatter):
         filter_mssge = filter_datum(self.fields,
                                     self.REDACTION,
                                     record.getMessage(), self.SEPARATOR)
-        record.msg = filter_mssge
-        return super().format(record)
+        original_mssg = super().format(record)
+        return original_mssg.replace(record.msg, filter_mssge)
 
 
 def get_logger() -> logging.Logger:
