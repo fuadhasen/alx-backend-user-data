@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""  module
+"""  module for Authentication
 """
 from flask import request
 from typing import List, TypeVar
+from models.user import User
 
 
 class Auth:
@@ -34,5 +35,5 @@ class Auth:
             return None
         return request.headers.get('Authorization')
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request=None) -> 'User':
         return None

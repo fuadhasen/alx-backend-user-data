@@ -6,6 +6,7 @@ from flask import request
 from .auth import Auth
 from typing import List, TypeVar, Tuple
 from models.base import Base
+from models.user import User
 
 class BasicAuth(Auth):
     """Basic Authentication Simulation
@@ -51,7 +52,7 @@ class BasicAuth(Auth):
         return (user, email)
 
 
-    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'):
+    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> 'User':
         """User from credential"""
         if user_email is None or not isinstance(user_email, str):
             return None
