@@ -8,6 +8,7 @@ from typing import List, TypeVar, Tuple
 from models.base import Base
 from models.user import User
 
+
 class BasicAuth(Auth):
     """Basic Authentication Simulation
     """
@@ -59,11 +60,19 @@ class BasicAuth(Auth):
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
 
-        user_list = Base.search({'user_email': user_email})
+        try:
+            user_list = User.search({'email': user_email})
+        except Exception:
+            return None
+        
         if len(user_list) == 0:
             return None
         for user in user_list:
-            if user.is_valid_password(user_pwd):
+            if user.is_valid_password(user_pwd) is True:
                 return user
         return None
 
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """current user """
+        
