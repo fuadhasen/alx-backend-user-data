@@ -86,6 +86,9 @@ def main():
                                        log_message, None, None)
         formatter = RedactingFormatter(fields=PII_FIELDS)
         print(formatter.format(log_record))
+    cursor.close()
+    conn.close()
+
 
 
 if __name__ == "__main__":
