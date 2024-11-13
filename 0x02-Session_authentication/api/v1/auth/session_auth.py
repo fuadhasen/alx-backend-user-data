@@ -8,6 +8,7 @@ from typing import List, TypeVar, Tuple
 from models.base import Base
 from models.user import User
 import uuid
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -37,4 +38,11 @@ class SessionAuth(Auth):
 
         user_id = self.user_id_by_session_id.get(session_id)
         return user_id
-        
+
+    def current_user(self, request=None):
+        """override current user for session auth
+        """
+        session_id = self.session_cookie(request)
+        user_id = self.user_id_by_session_id.get(session_id)
+        user_instance = User.get(user_id)
+        return user_instance
