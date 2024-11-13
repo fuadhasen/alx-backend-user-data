@@ -49,8 +49,8 @@ class BasicAuth(Auth):
             return (None, None)
         if ':' not in decoded_base64_authorization_header:
             return (None, None)
-        user, email = decoded_base64_authorization_header.split(':')
-        return (user, email)
+        email, pwd = decoded_base64_authorization_header.split(':')
+        return (email, pwd)
 
 
     def user_object_from_credentials(self, user_email: str, user_pwd: str) -> 'User':
@@ -74,5 +74,16 @@ class BasicAuth(Auth):
 
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """current user """
-        
+        """override Auth and retreive user instance
+        """
+        # You must use authorization_header
+        header = self.authorization_header(request)
+        # You must use extract_base64_authorization_header
+        value = self.extract_base64_authorization_header(header)
+        # You must use decode_base64_authorization_header
+        credentials = self.decode_base64_authorization_header(value)
+        # You must use extract_user_credentials
+        email, pwd = self.extract_user_credentials(credentials)
+        # You must use user_object_from_credentials
+        user = self.user_object_from_credentials(email, pwd)
+        return user
