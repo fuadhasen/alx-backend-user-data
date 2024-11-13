@@ -74,7 +74,7 @@ class BasicAuth(Auth):
 
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """override Auth and retreive user instance
+        """override Auth and retreive authenticated user instance 
         """
         # You must use authorization_header
         header = self.authorization_header(request)
