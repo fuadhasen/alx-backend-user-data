@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """  module for BasiAuth
 """
+from os import getenv
 import base64
 from flask import request
 from .auth import Auth
@@ -46,3 +47,18 @@ class SessionAuth(Auth):
         user_id = self.user_id_by_session_id.get(session_id)
         user_instance = User.get(user_id)
         return user_instance
+
+    def destroy_session(self, request=None):
+        """custome logout implementation
+        """
+        if request is None:
+            return False
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return False
+        user_id = self.user_id_by_session_id.get(session_id)
+        if user_id is None:
+            return False
+        del self.user_id_by_session_id[session_id]
+        return True
+
