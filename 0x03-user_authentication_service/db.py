@@ -64,7 +64,7 @@ class DB:
         if not user:
             return None
         for key, val in kwargs.items():
-            if not hasattr(user, key):
+            if not hasattr(User, key):
                 raise ValueError
             setattr(user, key, val)
         return None
