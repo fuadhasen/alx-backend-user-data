@@ -46,12 +46,13 @@ class DB:
     def find_user_by(self, **kwargs):
         """find user from Database
         """
-        session = self._session
         for key, val in kwargs.items():
             if not hasattr(User, key):
                 raise InvalidRequestError
-            filter_user = session.query(User)
+            filter_user = self._session.query(User)
             user = filter_user.filter(getattr(User, key) == val).first()
+            if user:
+                break
         if not user:
             raise NoResultFound
         return user
