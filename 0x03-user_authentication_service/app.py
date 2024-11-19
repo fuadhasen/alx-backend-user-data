@@ -10,6 +10,7 @@ AUTH = Auth()
 
 app = Flask(__name__)
 
+
 @app.route('/', methods=['GET'], strict_slashes=False)
 def index():
     """Index route"""
@@ -26,12 +27,11 @@ def users():
         user = user_obj.find_user_by(email=email)
     except Exception:
         AUTH.register_user(email, password)
-        return jsonify({"email": "<registered email>", "message": "user created"})
-    
+        return jsonify({"email": "<registered email>",
+                        "message": "user created"})
 
     AUTH.register_user()
 
-    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
