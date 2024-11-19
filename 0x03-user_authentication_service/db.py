@@ -19,8 +19,7 @@ class DB:
         """Initialize a new DB instance
         """
         self._engine = create_engine(
-            "mysql+mysqlconnector://root:your_password@localhost/authenticate"
-        )
+            "sqlite:///a.db", echo=True)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -47,6 +46,16 @@ class DB:
     def find_user_by(self, **kwargs: str) -> User:
         """method to find user
         """
+        for key, val in kwargs.items():
+            if not hasattr(User, key):
+                raise InvalidRequestError
+            filtered_user = self._session.query(User)
+            row = filtered_user.filter(getattr(User, key) == val).first()
+        if not row:
+            return NoResultFound
+        return row
+
+            
         key1, value1 = list(kwargs.items())[0]
         if hasattr(User, key1):
             filtered_user = self._session.query(User)
@@ -62,20 +71,11 @@ class DB:
         """
         user_filter = self._session.query(User)
         user = user_filter.filter(User.id == user_id).first()
-    
-        if user is None:
-            raise ValueError
-        if not kwargs:
-            raise ValueError
 
-        try:
-            for key, val in kwargs.items():
-                if not hasattr(user, key):
-                    raise ValueError
-                setattr(user, key, val)
-            self._session.commit()
-        except Exception:
-            raise ValueError
+        key1, value1 = list(kwargs.items())[0]
+   
+        setattr(user, key1, value1)
+        self._session.commit()
 
         try:
             self.find_user_by(**kwargs)
