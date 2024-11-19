@@ -17,7 +17,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -46,20 +46,19 @@ class DB:
     def find_user_by(self, **kwargs):
         """find user from Database
         """
+        session = self._session
         for key, val in kwargs.items():
             if not hasattr(User, key):
                 raise InvalidRequestError
-            filter_user = self._session.query(User)
+            filter_user = session.query(User)
             user = filter_user.filter(getattr(User, key) == val).first()
         if not user:
             raise NoResultFound
         return user
 
-    def update_user(self, user_id: int, **kwargs):
+    def update_user(self, user_id: int, **kwargs) -> None:
         """update user from the Databse
         """
-        # filter_user = self._session.query(User)
-        # user = filter_user.filter(User.id == user_id).first()
         user = self.find_user_by(id=user_id)
         if not user:
             return None
@@ -67,4 +66,5 @@ class DB:
             if not hasattr(User, key):
                 raise ValueError
             setattr(user, key, val)
+        self._session.commit()
         return None
