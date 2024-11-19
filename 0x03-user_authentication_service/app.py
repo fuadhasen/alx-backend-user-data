@@ -52,13 +52,15 @@ def login():
 def logout():
     """method to logout user"""
     session_id = request.form.get('session_id')
+    if not session_id:
+        abort(403)
 
     user = AUTH.get_user_from_session_id(session_id)
     if not user:
         abort(403)
 
     AUTH.destroy_session(user.id)
-    redirect(url_for('/'))
+    return redirect('/')
 
 
 if __name__ == "__main__":
