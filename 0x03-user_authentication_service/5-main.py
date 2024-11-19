@@ -20,4 +20,3 @@ try:
     print("successfully created a new user!")
 except ValueError as err:
     print("could not create a new user: {}".format(err))        
-

@@ -62,11 +62,20 @@ class DB:
         """
         user_filter = self._session.query(User)
         user = user_filter.filter(User.id == user_id).first()
+    
+        if user is None:
+            raise ValueError
+        if not kwargs:
+            raise ValueError
 
-        key1, value1 = list(kwargs.items())[0]
-   
-        setattr(user, key1, value1)
-        self._session.commit()
+        try:
+            for key, val in kwargs.items():
+                if not hasattr(user, key):
+                    raise ValueError
+                setattr(user, key, val)
+            self._session.commit()
+        except Exception:
+            raise ValueError
 
         try:
             self.find_user_by(**kwargs)
