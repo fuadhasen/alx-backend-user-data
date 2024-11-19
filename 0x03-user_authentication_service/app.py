@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request
 from auth import Auth
 from db import DB
+from sqlalchemy.orm.exc import NoResultFound
 
 AUTH = Auth()
 
@@ -22,15 +23,13 @@ def users():
     """method to register usersl"""
     email = request.form.get('email')
     password = request.form.get('password')
-    user_obj = DB()
+    
     try:
-        user = user_obj.find_user_by(email=email)
-    except Exception:
-        AUTH.register_user(email, password)
-        return jsonify({"email": "<registered email>",
-                        "message": "user created"})
-
-    AUTH.register_user()
+         AUTH.register_user(email, password)
+    except ValueError:
+        return jsonify({"message": "email already registered"}), 400
+        
+    return jsonify({"email": email, "message": "user created"})
 
 
 if __name__ == "__main__":

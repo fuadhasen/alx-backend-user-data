@@ -17,7 +17,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=False)
+        self._engine = create_engine("sqlite:///a.db", echo=True)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -34,13 +34,12 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """instance method to Add new User
         """
-        session = self._session
         obj = User()
         obj.email = email
         obj.hashed_password = hashed_password
 
-        session.add(obj)
-        session.commit()
+        self._session.add(obj)
+        self._session.commit()
         return obj
 
     def find_user_by(self, **kwargs):
@@ -51,8 +50,7 @@ class DB:
                 raise InvalidRequestError
             filter_user = self._session.query(User)
             user = filter_user.filter(getattr(User, key) == val).first()
-            if user:
-                break
+
         if not user:
             raise NoResultFound
         return user
