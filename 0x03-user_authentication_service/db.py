@@ -60,11 +60,9 @@ class DB:
         """
         # filter_user = self._session.query(User)
         # user = filter_user.filter(User.id == user_id).first()
-        try:
-            user = self.find_user_by(id=user_id)
-        except Exception:
-            raise ValueError
-
+        user = self.find_user_by(id=user_id)
+        if not user:
+            return None
         for key, val in kwargs.items():
             if not hasattr(user, key):
                 raise ValueError
