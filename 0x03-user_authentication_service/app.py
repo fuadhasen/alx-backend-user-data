@@ -18,14 +18,14 @@ def index():
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'], strict_slashes=False)
+@app.route('/users', methods=['POST'])
 def users():
     """method to register usersl"""
     email = request.form.get('email')
     password = request.form.get('password')
-    
+
     try:
-         AUTH.register_user(email, password)
+        AUTH.register_user(email, password)
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
         
