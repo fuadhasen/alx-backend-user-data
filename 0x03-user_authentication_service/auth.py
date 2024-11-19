@@ -24,16 +24,11 @@ class Auth:
     def register_user(self, email: str, password: str) -> User:
         """method to register user
         """
-        user_obj = DB()
-
-        # user = user_obj.find_user_by(email=email)
-        # print(user)
         try:
-            print('kelay alen')
-            user = user_obj.find_user_by(email=email)
-            # raise ValueError(f'User {email} already exists')
-        except Exception:
-            print('wef eziga')
+            user = self._db.find_user_by(email=email)
+            if user:
+                raise ValueError
+        except NoResultFound:
             hashed = _hash_password(password)
             user = self._db.add_user(email, hashed)
-            return user
+        return user
