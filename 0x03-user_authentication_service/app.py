@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Flask app module
 """
-from flask import Flask, jsonify, request, make_response, abort
+from flask import (Flask, jsonify, request,
+                   make_response, abort,
+                   redirect, url_for)
 from auth import Auth
 from db import DB
 from sqlalchemy.orm.exc import NoResultFound
@@ -33,7 +35,7 @@ def users():
 
 @app.route('/sessions', methods=['POST'])
 def login():
-    """method to register usersl"""
+    """method to login user"""
     email = request.form.get('email')
     password = request.form.get('password')
 
@@ -44,6 +46,19 @@ def login():
     resp = make_response({"email": email, "message": "logged in"})
     resp.set_cookie("session_id", session_id)
     return resp
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """method to logout user"""
+    session_id = request.form.get('session_id')
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    redirect(url_for('/'))
 
 
 if __name__ == "__main__":
