@@ -16,11 +16,11 @@ def _hash_password(password: str) -> bytes:
     return hashed_pwd
 
 
-def _generate_uuid():
+def _generate_uuid() -> str:
     """function to generate UUID
     """
-    id = uuid.uuid4()
-    return str(id)
+    import uuid
+    return str(uuid.uuid4())
 
 
 class Auth:
