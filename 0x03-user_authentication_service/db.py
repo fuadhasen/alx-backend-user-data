@@ -55,12 +55,18 @@ class DB:
             raise NoResultFound
         return user
 
-        # key, val = list(kwargs.items())[0]
-        # if hasattr(User, key):
-        #     filter_user = self._session.query(User)
-        #     user = filter_user.filter(getattr(User, key) == val).first()
-        #     if not user:
-        #         raise NoResultFound
-        #     return user
-        # else:
-        #     raise InvalidRequestError
+    def update_user(self, user_id: int, **kwargs):
+        """update user from the Databse
+        """
+        # filter_user = self._session.query(User)
+        # user = filter_user.filter(User.id == user_id).first()
+        try:
+            user = self.find_user_by(id=user_id)
+        except Exception:
+            raise ValueError
+
+        for key, val in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError
+            setattr(user, key, val)
+        return None
