@@ -42,3 +42,25 @@ class DB:
         session.add(obj)
         session.commit()
         return obj
+
+    def find_user_by(self, **kwargs):
+        """find user from Database
+        """
+        for key, val in kwargs.items():
+            if not hasattr(User, key):
+                raise InvalidRequestError
+            filter_user = self._session.query(User)
+            user = filter_user.filter(getattr(User, key) == val).first()
+        if not user:
+            raise NoResultFound
+        return user
+
+        # key, val = list(kwargs.items())[0]
+        # if hasattr(User, key):
+        #     filter_user = self._session.query(User)
+        #     user = filter_user.filter(getattr(User, key) == val).first()
+        #     if not user:
+        #         raise NoResultFound
+        #     return user
+        # else:
+        #     raise InvalidRequestError
