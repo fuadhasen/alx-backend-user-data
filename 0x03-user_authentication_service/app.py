@@ -33,32 +33,31 @@ def users():
     return jsonify({"email": email, "message": "user created"})
 
 
-@app.route('/sessions', methods=['POST', 'DELETE'])
+@app.route('/sessions', methods=['POST'])
 def login():
     """method to login user"""
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-        ok = AUTH.valid_login(email, password)
-        if not ok:
-            abort(401)
-        session_id = AUTH.create_session(email)
-        resp = make_response({"email": email, "message": "logged in"})
-        resp.set_cookie("session_id", session_id)
-        return resp
-    elif request.method == 'DELETE':
-        session_id = request.form.get('session_id')
-        if not session_id:
-            abort(403)
+    ok = AUTH.valid_login(email, password)
+    if not ok:
+        abort(401)
+    session_id = AUTH.create_session(email)
+    resp = make_response({"email": email, "message": "logged in"})
+    resp.set_cookie("session_id", session_id)
+    return resp
 
-        user = AUTH.get_user_from_session_id(session_id)
-        if not user:
-            abort(403)
 
-        AUTH.destroy_session(user.id)
-        return redirect('/')
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """method to logout user"""
+    session_id = request.form.get('session_id')
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
 
+    AUTH.destroy_session(user.id)
+    return redirect('/')
 
 
 @app.route('/profile', methods=['GET'])
@@ -66,8 +65,6 @@ def profile():
     """method to register usersl"""
     session_id = request.form.get("session_id")
     if not session_id:
-        
-        print('fula')
         abort(403)
     user = AUTH.get_user_from_session_id(session_id)
     if not user:
