@@ -86,7 +86,7 @@ def reset():
 
 
 @app.route('/reset_password', methods=['PUT'])
-def reset():
+def reset2():
     """method to register users
     """
     email = request.form .get("email")
